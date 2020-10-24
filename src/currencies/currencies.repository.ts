@@ -1,8 +1,17 @@
+import { BadRequestException } from '@nestjs/common';
+import { EntityRepository, Repository } from 'typeorm';
+
+// Entities
 import { Currencies } from './currencies.entity';
 
-export class CurrenciesRepository {
+@EntityRepository(Currencies)
+export class CurrenciesRepository extends Repository<Currencies> {
     async getCurrency(currency: string): Promise<Currencies> {
-        return new Currencies();
+        const result = await this.findOne({ currency });
+
+        if (!result) throw new BadRequestException(`Currency not found with the name: ${currency}`);
+
+        return result;
     }
 
     async createCurrency({ currency, value }): Promise<Currencies> {
