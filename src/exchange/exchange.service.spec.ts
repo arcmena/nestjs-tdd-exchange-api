@@ -30,27 +30,34 @@ describe('ExchangeService', () => {
     });
 
     describe('convertAmount()', () => {
-        it('should be thrown if called with invalid params', async () => {
+        it('should throw if called with invalid params', async () => {
             await expect(service.convertAmount({ from: '', to: '', amount: 0 })).rejects.toThrow(
                 new BadRequestException(),
             );
         });
 
-        it('should not be thrown if called with valid params', async () => {
+        it('should not throw if called with valid params', async () => {
             await expect(
                 service.convertAmount({ from: 'USD', to: 'BRL', amount: 1 }),
             ).resolves.not.toThrow();
         });
 
-        it('should be called getCurrency twice', async () => {
+        it('should call getCurrency twice', async () => {
             await service.convertAmount({ from: 'USD', to: 'BRL', amount: 1 }),
                 expect(currenciesService.getCurrency).toBeCalledTimes(2);
         });
 
-        it('should be called getCurrency with correct param', async () => {
+        it('should call getCurrency with correct param', async () => {
             await service.convertAmount({ from: 'USD', to: 'BRL', amount: 1 }),
                 expect(currenciesService.getCurrency).toBeCalledWith('USD');
             expect(currenciesService.getCurrency).toHaveBeenLastCalledWith('BRL');
+        });
+
+        it('should throw when getCurrency throw', async () => {
+            (currenciesService.getCurrency as jest.Mock).mockRejectedValue(new Error());
+            await expect(
+                service.convertAmount({ from: 'INVALID', to: 'BRL', amount: 1 }),
+            ).rejects.toThrow();
         });
     });
 });
