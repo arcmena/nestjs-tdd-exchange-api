@@ -31,9 +31,9 @@ describe('ExchangeService', () => {
 
     describe('convertAmount()', () => {
         it('should be thrown if called with invalid params', async () => {
-            await expect(
-                service.convertAmount({ from: '', to: '', amount: 0 }),
-            ).rejects.toThrow(new BadRequestException());
+            await expect(service.convertAmount({ from: '', to: '', amount: 0 })).rejects.toThrow(
+                new BadRequestException(),
+            );
         });
 
         it('should not be thrown if called with valid params', async () => {
@@ -45,6 +45,12 @@ describe('ExchangeService', () => {
         it('should be called getCurrency twice', async () => {
             await service.convertAmount({ from: 'USD', to: 'BRL', amount: 1 }),
                 expect(currenciesService.getCurrency).toBeCalledTimes(2);
+        });
+
+        it('should be called getCurrency with correct param', async () => {
+            await service.convertAmount({ from: 'USD', to: 'BRL', amount: 1 }),
+                expect(currenciesService.getCurrency).toBeCalledWith('USD');
+            expect(currenciesService.getCurrency).toHaveBeenLastCalledWith('BRL');
         });
     });
 });

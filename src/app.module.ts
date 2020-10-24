@@ -2,6 +2,6 @@ import { Module } from '@nestjs/common';
 import { ExchangeModule } from './exchange/exchange.module';
 
 @Module({
-  imports: [ExchangeModule],
+    imports: [ExchangeModule],
 })
 export class AppModule {}
