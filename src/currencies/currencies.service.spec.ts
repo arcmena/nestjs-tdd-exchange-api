@@ -12,6 +12,7 @@ describe('CurrenciesService', () => {
             getCurrency: jest.fn(),
             createCurrency: jest.fn(),
             updateCurrency: jest.fn(),
+            deleteCurrency: jest.fn(),
         };
 
         const module: TestingModule = await Test.createTestingModule({
@@ -129,6 +130,27 @@ describe('CurrenciesService', () => {
         it('should return when repository return correct value', async () => {
             (repository.updateCurrency as jest.Mock).mockReturnValue(mockData);
             expect(await service.updateCurrency(mockData)).toEqual(mockData);
+        });
+    });
+
+    describe('deleteCurrency()', () => {
+        it('should throw if repository throw', async () => {
+            (repository.deleteCurrency as jest.Mock).mockRejectedValue(
+                new InternalServerErrorException(),
+            );
+
+            await expect(service.deleteCurrency('INVALID')).rejects.toThrow(
+                new InternalServerErrorException(),
+            );
+        });
+
+        it('should not throw if repository returns', async () => {
+            await expect(service.deleteCurrency('EUR')).resolves.not.toThrow();
+        });
+
+        it('should call repository with correct param', async () => {
+            await service.deleteCurrency('EUR');
+            expect(repository.deleteCurrency).toBeCalledWith('EUR');
         });
     });
 });
