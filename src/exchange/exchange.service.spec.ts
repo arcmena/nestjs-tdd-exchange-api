@@ -2,9 +2,12 @@ import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CurrenciesService, ExchangeService } from './exchange.service';
 
+import { ExchangeInputType } from './types/exchange-input.type';
+
 describe('ExchangeService', () => {
     let service: ExchangeService;
     let currenciesService: CurrenciesService;
+    let mockData;
 
     beforeEach(async () => {
         const currenciesServiceMock = {
@@ -23,6 +26,7 @@ describe('ExchangeService', () => {
 
         service = module.get<ExchangeService>(ExchangeService);
         currenciesService = module.get<CurrenciesService>(CurrenciesService);
+        mockData = { from: 'USD', to: 'BRL', amount: 1 } as ExchangeInputType;
     });
 
     it('should be defined', () => {
@@ -31,50 +35,67 @@ describe('ExchangeService', () => {
 
     describe('convertAmount()', () => {
         it('should throw if called with invalid params', async () => {
-            await expect(service.convertAmount({ from: '', to: '', amount: 0 })).rejects.toThrow(
+            mockData.from = '';
+            await expect(service.convertAmount(mockData)).rejects.toThrow(
+                new BadRequestException(),
+            );
+
+            mockData.from = 'USD';
+            mockData.amount = 0;
+            await expect(service.convertAmount(mockData)).rejects.toThrow(
+                new BadRequestException(),
+            );
+
+            mockData.from = 'USD';
+            mockData.to = 'USD';
+            mockData.amount = 0;
+            await expect(service.convertAmount(mockData)).rejects.toThrow(
                 new BadRequestException(),
             );
         });
 
         it('should not throw if called with valid params', async () => {
-            await expect(
-                service.convertAmount({ from: 'USD', to: 'BRL', amount: 1 }),
-            ).resolves.not.toThrow();
+            await expect(service.convertAmount(mockData)).resolves.not.toThrow();
         });
 
         it('should call getCurrency twice', async () => {
-            await service.convertAmount({ from: 'USD', to: 'BRL', amount: 1 }),
-                expect(currenciesService.getCurrency).toBeCalledTimes(2);
+            await service.convertAmount(mockData);
+            expect(currenciesService.getCurrency).toBeCalledTimes(2);
         });
 
         it('should call getCurrency with correct param', async () => {
-            await service.convertAmount({ from: 'USD', to: 'BRL', amount: 1 }),
-                expect(currenciesService.getCurrency).toBeCalledWith('USD');
+            await service.convertAmount(mockData);
+            expect(currenciesService.getCurrency).toBeCalledWith('USD');
             expect(currenciesService.getCurrency).toHaveBeenLastCalledWith('BRL');
         });
 
         it('should throw when getCurrency throw', async () => {
             (currenciesService.getCurrency as jest.Mock).mockRejectedValue(new Error());
-            await expect(
-                service.convertAmount({ from: 'INVALID', to: 'BRL', amount: 1 }),
-            ).rejects.toThrow();
+            mockData.from = 'INVALID';
+            await expect(service.convertAmount(mockData)).rejects.toThrow();
         });
 
         it('should return correct converted value', async () => {
             (currenciesService.getCurrency as jest.Mock).mockResolvedValueOnce({ value: 1 });
-            expect(await service.convertAmount({ from: 'USD', to: 'USD', amount: 1 })).toEqual({
+            mockData.from = 'USD';
+            mockData.to = 'USD';
+            expect(await service.convertAmount(mockData)).toEqual({
                 amount: 1,
             });
 
             (currenciesService.getCurrency as jest.Mock).mockResolvedValueOnce({ value: 1 });
             (currenciesService.getCurrency as jest.Mock).mockResolvedValueOnce({ value: 0.2 });
-            expect(await service.convertAmount({ from: 'USD', to: 'BRL', amount: 1 })).toEqual({
+            mockData.from = 'USD';
+            mockData.to = 'BRL';
+            expect(await service.convertAmount(mockData)).toEqual({
                 amount: 5,
             });
 
             (currenciesService.getCurrency as jest.Mock).mockResolvedValueOnce({ value: 0.2 });
             (currenciesService.getCurrency as jest.Mock).mockResolvedValueOnce({ value: 1 });
-            expect(await service.convertAmount({ from: 'BRL', to: 'USD', amount: 1 })).toEqual({
+            mockData.from = 'BRL';
+            mockData.to = 'BRL';
+            expect(await service.convertAmount(mockData)).toEqual({
                 amount: 0.2,
             });
         });
