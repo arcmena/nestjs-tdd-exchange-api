@@ -43,4 +43,22 @@ describe('CurrenciesRepository', () => {
             expect(await repository.getCurrency('USD')).toEqual(mockData);
         });
     });
+
+    describe('createCurrency()', () => {
+        // it('should call findOne with correct params', async () => {
+        //     repository.findOne = jest.fn().mockReturnValue({});
+        //     await repository.getCurrency('USD');
+        //     expect(repository.findOne).toBeCalledWith({ currency: 'USD' });
+        // });
+        // it('should throw if findOne returns empty', async () => {
+        //     repository.findOne = jest.fn().mockReturnValue(undefined);
+        //     await expect(repository.getCurrency('USD')).rejects.toThrow(
+        //         new BadRequestException('Currency not found with the name: USD'),
+        //     );
+        // });
+        // it('should return the value searched if it exists in the database', async () => {
+        //     repository.findOne = jest.fn().mockReturnValue(mockData);
+        //     expect(await repository.getCurrency('USD')).toEqual(mockData);
+        // });
+    });
 });
