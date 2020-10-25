@@ -49,24 +49,9 @@ describe('CurrenciesRepository', () => {
             repository.save = jest.fn();
         });
 
-        it('should call create with correct params', async () => {
-            repository.create = jest.fn().mockReturnValue(mockData);
-            await repository.createCurrency(mockData);
-            expect(repository.create).toBeCalledWith(mockData);
-        });
-
-        it('should throw when create throw', async () => {
-            repository.create = jest.fn().mockRejectedValue(new InternalServerErrorException());
-            await expect(repository.createCurrency(mockData)).rejects.toThrow(
-                new InternalServerErrorException(),
-            );
-        });
-
-        it('should call save after calling create', async () => {
-            repository.create = jest.fn().mockReturnValue(mockData);
+        it('should call save with correct params', async () => {
             repository.save = jest.fn().mockReturnValue(mockData);
             await repository.createCurrency(mockData);
-            expect(repository.create).toBeCalledWith(mockData);
             expect(repository.save).toBeCalledWith(mockData);
         });
 
@@ -76,6 +61,15 @@ describe('CurrenciesRepository', () => {
             await expect(repository.createCurrency(mockData)).rejects.toThrow(
                 new InternalServerErrorException(),
             );
+        });
+
+        it('should throw if called with invalid params', async () => {
+            mockData.currency = 'INVALID';
+            await expect(repository.createCurrency(mockData)).rejects.toThrow();
+
+            mockData.currency = 'USD';
+            mockData.value = null;
+            await expect(repository.createCurrency(mockData)).rejects.toThrow();
         });
 
         it('should return the created data', async () => {
