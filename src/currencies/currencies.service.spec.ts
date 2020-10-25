@@ -8,12 +8,12 @@ import { CurrenciesRepository } from './currencies.repository';
 import { CurrenciesService } from './currencies.service';
 
 // Entity
-import { Currencies } from './currencies.entity';
+import { Currency } from './currency.entity';
 
 describe('CurrenciesService', () => {
     let service: CurrenciesService;
     let repository: CurrenciesRepository;
-    let mockData: Currencies;
+    let mockData: Currency;
 
     beforeEach(async () => {
         const currenciesRepositoryMock = {
@@ -35,7 +35,7 @@ describe('CurrenciesService', () => {
 
         service = module.get<CurrenciesService>(CurrenciesService);
         repository = module.get<CurrenciesRepository>(CurrenciesRepository);
-        mockData = { currency: 'USD', value: 1 } as Currencies;
+        mockData = { currency: 'USD', value: 1 } as Currency;
     });
 
     it('should be defined', () => {

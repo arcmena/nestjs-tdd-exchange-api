@@ -4,7 +4,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { CurrenciesRepository } from './currencies.repository';
 
 // Entity
-import { Currencies } from './currencies.entity';
+import { Currency } from './currency.entity';
 
 @Injectable()
 export class CurrenciesService {
@@ -12,16 +12,16 @@ export class CurrenciesService {
         //
     }
 
-    async getCurrency(currency: string): Promise<Currencies> {
+    async getCurrency(currency: string): Promise<Currency> {
         return await this.currenciesRepository.getCurrency(currency);
     }
 
-    async createCurrency({ currency, value }): Promise<Currencies> {
+    async createCurrency({ currency, value }): Promise<Currency> {
         if (value <= 0) throw new BadRequestException('The value must be greater than zero.');
         return await this.currenciesRepository.createCurrency({ currency, value });
     }
 
-    async updateCurrency({ currency, value }): Promise<Currencies> {
+    async updateCurrency({ currency, value }): Promise<Currency> {
         if (value <= 0) {
             throw new BadRequestException('The value must be greater than zero.');
         } else if (!currency) {

@@ -1,4 +1,4 @@
 export type CurrenciesInputType = {
     currency: string;
-    value: string;
+    value: number;
 };
