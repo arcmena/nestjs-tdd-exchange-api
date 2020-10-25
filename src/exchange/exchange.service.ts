@@ -9,9 +9,7 @@ import { ExchangeType } from './types/exchange.type';
 
 @Injectable()
 export class ExchangeService {
-    constructor(private currenciesService: CurrenciesService) {
-        //
-    }
+    constructor(private currenciesService: CurrenciesService) {}
 
     async convertAmount({ from, to, amount }: ExchangeInputType): Promise<ExchangeType> {
         if (!from || !to || !amount) throw new BadRequestException();

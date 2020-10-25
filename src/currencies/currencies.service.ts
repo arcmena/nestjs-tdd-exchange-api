@@ -8,9 +8,7 @@ import { Currency } from './currency.entity';
 
 @Injectable()
 export class CurrenciesService {
-    constructor(private currenciesRepository: CurrenciesRepository) {
-        //
-    }
+    constructor(private currenciesRepository: CurrenciesRepository) {}
 
     async getCurrency(currency: string): Promise<Currency> {
         return await this.currenciesRepository.getCurrency(currency);
