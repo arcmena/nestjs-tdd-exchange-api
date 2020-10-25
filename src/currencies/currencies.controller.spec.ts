@@ -6,16 +6,20 @@ import { CurrenciesController } from './currencies.controller';
 
 // Service
 import { CurrenciesService } from './currencies.service';
+
+// Entity
 import { Currency } from './currency.entity';
 
 describe('CurrenciesController', () => {
     let controller: CurrenciesController;
     let service: CurrenciesService;
-    let mockData: Currency;
+    let fullCurrency: Currency;
+    let newCurrency: Currency;
 
     beforeEach(async () => {
         const currenciesServiceMock = {
             getCurrency: jest.fn(),
+            createCurrency: jest.fn(),
         };
 
         const module: TestingModule = await Test.createTestingModule({
@@ -25,7 +29,8 @@ describe('CurrenciesController', () => {
 
         controller = module.get<CurrenciesController>(CurrenciesController);
         service = module.get<CurrenciesService>(CurrenciesService);
-        mockData = { id: 1, currency: 'USD', value: 1, created_at: new Date() } as Currency;
+        fullCurrency = { id: 1, currency: 'USD', value: 1, created_at: new Date() } as Currency;
+        newCurrency = { currency: 'USD', value: 1 } as Currency;
     });
 
     it('should be defined', () => {
@@ -40,14 +45,33 @@ describe('CurrenciesController', () => {
             );
         });
 
-        it('should be called service with correct params', async () => {
+        it('should call service with correct params', async () => {
             await controller.getCurrency('USD');
             expect(service.getCurrency).toBeCalledWith('USD');
         });
 
         it('should return when service return', async () => {
-            (service.getCurrency as jest.Mock).mockReturnValue(mockData);
-            expect(await controller.getCurrency('USD')).toEqual(mockData);
+            (service.getCurrency as jest.Mock).mockReturnValue(fullCurrency);
+            expect(await controller.getCurrency('USD')).toEqual(fullCurrency);
+        });
+    });
+
+    describe('createCurrency()', () => {
+        it('should throw when service throw', async () => {
+            (service.createCurrency as jest.Mock).mockRejectedValue(new BadRequestException());
+            await expect(controller.createCurrency(newCurrency)).rejects.toThrow(
+                new BadRequestException(),
+            );
+        });
+
+        it('should be called service with correct params', async () => {
+            await controller.createCurrency(newCurrency);
+            expect(service.createCurrency).toBeCalledWith(newCurrency);
+        });
+
+        it('should return when service return', async () => {
+            (service.createCurrency as jest.Mock).mockReturnValue(fullCurrency);
+            expect(await controller.createCurrency(fullCurrency)).toEqual(fullCurrency);
         });
     });
 });

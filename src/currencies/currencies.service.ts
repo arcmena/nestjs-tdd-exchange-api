@@ -5,6 +5,7 @@ import { CurrenciesRepository } from './currencies.repository';
 
 // Entity
 import { Currency } from './currency.entity';
+import { CreateCurrencyDto } from './dto/create-currency.dto';
 
 @Injectable()
 export class CurrenciesService {
@@ -14,12 +15,13 @@ export class CurrenciesService {
         return await this.currenciesRepository.getCurrency(currency);
     }
 
-    async createCurrency({ currency, value }): Promise<Currency> {
-        if (value <= 0) throw new BadRequestException('The value must be greater than zero.');
-        return await this.currenciesRepository.createCurrency({ currency, value });
+    async createCurrency(createCurrencyDto: CreateCurrencyDto): Promise<Currency> {
+        if (createCurrencyDto.value <= 0)
+            throw new BadRequestException('The value must be greater than zero.');
+        return await this.currenciesRepository.createCurrency(createCurrencyDto);
     }
 
-    async updateCurrency({ currency, value }): Promise<Currency> {
+    async updateCurrency({ currency, value }: CreateCurrencyDto): Promise<Currency> {
         if (value <= 0) {
             throw new BadRequestException('The value must be greater than zero.');
         } else if (!currency) {

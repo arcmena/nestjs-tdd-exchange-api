@@ -6,7 +6,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Currency } from './currency.entity';
 
 // Types
-import { CurrenciesInputType } from './types/currencies-input.type';
+import { CreateCurrencyDto } from './dto/create-currency.dto';
 
 @EntityRepository(Currency)
 export class CurrenciesRepository extends Repository<Currency> {
@@ -18,7 +18,7 @@ export class CurrenciesRepository extends Repository<Currency> {
         return result;
     }
 
-    async createCurrency(newCurrency: CurrenciesInputType): Promise<Currency> {
+    async createCurrency(newCurrency: CreateCurrencyDto): Promise<Currency> {
         // TODO: Refactor to this.create
         const createdCurrency = new Currency();
         createdCurrency.currency = newCurrency.currency;
@@ -34,7 +34,7 @@ export class CurrenciesRepository extends Repository<Currency> {
         return createdCurrency;
     }
 
-    async updateCurrency({ currency, value }: CurrenciesInputType): Promise<Currency> {
+    async updateCurrency({ currency, value }: CreateCurrencyDto): Promise<Currency> {
         const result = await this.findOne({ currency });
 
         if (!result) throw new NotFoundException(`Currency not found with the name: ${currency}`);
