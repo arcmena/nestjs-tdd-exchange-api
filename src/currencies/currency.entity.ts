@@ -4,7 +4,7 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('currency')
 export class Currency {
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id: number;
 
     @PrimaryColumn()
     @Length(3, 3)
