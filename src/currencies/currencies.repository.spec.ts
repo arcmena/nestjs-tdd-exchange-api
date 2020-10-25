@@ -61,6 +61,7 @@ describe('CurrenciesRepository', () => {
 
         it('should throw if called with invalid params', async () => {
             mockData.currency = 'INVALID';
+            mockData.value = 5;
             await expect(repository.createCurrency(mockData)).rejects.toThrow();
 
             mockData.currency = 'USD';
@@ -108,6 +109,26 @@ describe('CurrenciesRepository', () => {
             repository.save = jest.fn().mockReturnValue({});
             const result = await repository.updateCurrency({ currency: 'USD', value: 2 });
             expect(result).toEqual({ currency: 'USD', value: 2 });
+        });
+    });
+
+    describe('deleteCurrency()', () => {
+        it('should call delete with correct param and return', async () => {
+            repository.delete = jest.fn().mockReturnValue({ affected: 1 });
+            await expect(repository.deleteCurrency('EUR')).resolves.not.toThrow();
+        });
+
+        it('should throw if affected columns === 0', async () => {
+            repository.delete = jest.fn().mockReturnValue({ affected: 0 });
+            mockData.currency = 'ERO';
+            await expect(repository.deleteCurrency(mockData.currency)).rejects.toThrow(
+                new NotFoundException(`Currency not found with the name: ${mockData.currency}`),
+            );
+        });
+
+        it('should throw when delete throw ', async () => {
+            repository.delete = jest.fn().mockRejectedValue(new Error());
+            await expect(repository.deleteCurrency('EUR')).rejects.toThrow(new Error());
         });
     });
 });
