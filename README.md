@@ -4,6 +4,8 @@
 
 ## Description
 
+The goal in this project was to create a currency exchange api with nestjs working with TDD principles and 100% test coverage. For study purposes.
+
 ## Installation
 
 ```bash
