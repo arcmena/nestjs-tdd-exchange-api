@@ -4,12 +4,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CurrenciesService } from '../currencies/currencies.service';
 import { ExchangeService } from './exchange.service';
 
-import { ExchangeInputType } from './types/exchange-input.type';
+import { ConvertAmountDto } from './dto/convert-amount.dto';
 
 describe('ExchangeService', () => {
     let service: ExchangeService;
     let currenciesService: CurrenciesService;
-    let mockData: ExchangeInputType;
+    let mockData: ConvertAmountDto;
 
     beforeEach(async () => {
         const currenciesServiceMock = {
@@ -28,7 +28,7 @@ describe('ExchangeService', () => {
 
         service = module.get<ExchangeService>(ExchangeService);
         currenciesService = module.get<CurrenciesService>(CurrenciesService);
-        mockData = { from: 'USD', to: 'BRL', amount: 1 } as ExchangeInputType;
+        mockData = { from: 'USD', to: 'BRL', amount: 1 } as ConvertAmountDto;
     });
 
     it('should be defined', () => {
@@ -82,7 +82,7 @@ describe('ExchangeService', () => {
             mockData.from = 'USD';
             mockData.to = 'USD';
             expect(await service.convertAmount(mockData)).toEqual({
-                amount: 1,
+                amount: '1.00',
             });
 
             (currenciesService.getCurrency as jest.Mock).mockResolvedValueOnce({ value: 1 });
@@ -90,7 +90,7 @@ describe('ExchangeService', () => {
             mockData.from = 'USD';
             mockData.to = 'BRL';
             expect(await service.convertAmount(mockData)).toEqual({
-                amount: 5,
+                amount: '5.00',
             });
 
             (currenciesService.getCurrency as jest.Mock).mockResolvedValueOnce({ value: 0.2 });
@@ -98,7 +98,7 @@ describe('ExchangeService', () => {
             mockData.from = 'BRL';
             mockData.to = 'BRL';
             expect(await service.convertAmount(mockData)).toEqual({
-                amount: 0.2,
+                amount: '0.20',
             });
         });
     });
