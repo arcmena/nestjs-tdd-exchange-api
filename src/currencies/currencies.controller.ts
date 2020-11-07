@@ -1,5 +1,4 @@
 import {
-    BadRequestException,
     Body,
     Controller,
     Delete,
@@ -40,7 +39,7 @@ export class CurrenciesController {
         return await this.currenciesService.deleteCurrency(currency);
     }
 
-    @Patch('/:currency/value')
+    @Patch('/:currency')
     async updateCurrency(@Param('currency') currency: string, @Body('value') value: number) {
         return await this.currenciesService.updateCurrency({ currency, value });
     }

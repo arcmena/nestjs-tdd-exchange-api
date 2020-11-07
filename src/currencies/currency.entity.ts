@@ -1,5 +1,11 @@
 import { IsNotEmpty, Length } from 'class-validator';
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('currency')
 export class Currency {
@@ -11,10 +17,13 @@ export class Currency {
     @IsNotEmpty()
     currency: string;
 
-    @Column()
+    @Column('decimal', { precision: 5, scale: 2 })
     @IsNotEmpty()
     value: number;
 
     @CreateDateColumn({ type: 'timestamp' })
     created_at: Date;
+
+    @UpdateDateColumn({ type: 'timestamp' })
+    updated_at: Date;
 }
